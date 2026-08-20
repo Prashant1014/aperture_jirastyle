@@ -1,0 +1,101 @@
+// Aperture — The Digital Arts Society — working members portal schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  WEBADMIN
+  CORE_MEMBER
+  TEAM_APERTURE
+  WORKING_TEAM
+}
+
+enum EventStatus {
+  UPCOMING
+  ONGOING
+  COMPLETED
+  CANCELLED
+}
+
+enum AssignmentStatus {
+  ASSIGNED
+  SORT_AND_EDIT
+  UPLOAD_DONE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(WORKING_TEAM)
+  title        String? // e.g. "Photography Lead"
+  bio          String?
+  avatarUrl    String?
+  contactNumber String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  eventsCreated   Event[]           @relation("EventCreatedBy")
+  assignments     EventAssignment[]
+  announcements   Announcement[]
+
+  @@index([role])
+}
+
+model Event {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  location    String?
+  driveLink   String?
+  startsAt    DateTime
+  endsAt      DateTime?
+  status      EventStatus @default(UPCOMING)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  createdById String?
+  createdBy   User?   @relation("EventCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+
+  assignments EventAssignment[]
+
+  @@index([status])
+  @@index([startsAt])
+}
+
+model EventAssignment {
+  id       String            @id @default(cuid())
+  eventId  String
+  userId   String
+  status   AssignmentStatus  @default(ASSIGNED)
+  note     String?
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([eventId, userId])
+}
+
+model Announcement {
+  id        String   @id @default(cuid())
+  title     String
+  body      String
+  imageUrl  String?
+  pinned    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([pinned])
+  @@index([createdAt])
+}
