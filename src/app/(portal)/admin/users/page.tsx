@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { UserList } from "./user-list";
 import { auth } from "@/auth";
 import { ImportUsersButton } from "./import-button";
+import { TestNotificationButton } from "./test-notification-button";
 
 export default async function AdminUsersPage() {
   const session = await auth();
@@ -19,6 +20,7 @@ export default async function AdminUsersPage() {
           <h1 className="text-3xl font-semibold tracking-tight">Manage members</h1>
         </div>
         <div className="flex items-center gap-2">
+          <TestNotificationButton />
           <ImportUsersButton />
           <Link href="/admin/users/new">
             <Button>New account</Button>

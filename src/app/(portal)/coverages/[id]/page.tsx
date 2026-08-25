@@ -49,7 +49,6 @@ export default async function EventDetailPage({
     : [];
 
   return (
-  return (
     <div className="space-y-6 animate-slide-up pb-12">
       {/* Top Header Breadcrumbs */}
       <div className="flex items-center text-sm text-white/50 gap-2 mb-2">

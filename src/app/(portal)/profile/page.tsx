@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/card";
 import { ProfileForm } from "./profile-form";
+import { PushSettings } from "./push-settings";
 
 export default async function ProfilePage() {
   const session = await auth();
@@ -29,6 +30,10 @@ export default async function ProfilePage() {
           initialAvatarUrl={user.avatarUrl}
           initialContactNumber={user.contactNumber}
         />
+      </Card>
+
+      <Card className="p-6">
+        <PushSettings />
       </Card>
     </div>
   );

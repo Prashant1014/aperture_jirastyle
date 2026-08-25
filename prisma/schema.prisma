@@ -46,6 +46,8 @@ model User {
   eventsCreated   Event[]           @relation("EventCreatedBy")
   assignments     EventAssignment[]
   announcements   Announcement[]
+  notifications   Notification[]
+  pushSubscriptions PushSubscription[]
 
   @@index([role])
 }
@@ -65,7 +67,8 @@ model Event {
   createdById String?
   createdBy   User?   @relation("EventCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
 
-  assignments EventAssignment[]
+  assignments   EventAssignment[]
+  notifications Notification[]
 
   @@index([status])
   @@index([startsAt])
@@ -78,8 +81,9 @@ model EventAssignment {
   status   AssignmentStatus  @default(ASSIGNED)
   note     String?
 
-  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  event         Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  user          User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notifications Notification[]
 
   @@unique([eventId, userId])
 }
@@ -98,4 +102,41 @@ model Announcement {
 
   @@index([pinned])
   @@index([createdAt])
+}
+
+enum NotificationType {
+  ASSIGNMENT_COMPLETED
+  TEST
+}
+
+model Notification {
+  id           String           @id @default(cuid())
+  recipientId  String
+  recipient    User             @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  eventId      String?
+  event        Event?           @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  assignmentId String?
+  assignment   EventAssignment? @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  type         NotificationType
+  title        String
+  message      String
+  read         Boolean          @default(false)
+  createdAt    DateTime         @default(now())
+
+  @@index([recipientId])
+  @@index([read])
+  @@index([createdAt])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
