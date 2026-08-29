@@ -14,16 +14,17 @@ export default async function AdminUsersPage() {
   });
 
   return (
-    <div className="space-y-6 animate-slide-up">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 animate-slide-up pb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-white/5">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Manage members</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">Manage members</h1>
+          <p className="text-xs sm:text-sm text-white/50 mt-0.5">{users.length} registered accounts</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           <TestNotificationButton />
           <ImportUsersButton />
           <Link href="/admin/users/new">
-            <Button>New account</Button>
+            <Button size="sm" className="h-9 px-3 text-xs font-semibold">New account</Button>
           </Link>
         </div>
       </div>

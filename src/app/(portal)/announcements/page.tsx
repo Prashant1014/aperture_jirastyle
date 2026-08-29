@@ -1,7 +1,6 @@
 import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { isCoreOrAbove } from "@/lib/roles";
 import { AnnouncementControls } from "./announcement-controls";
@@ -16,19 +15,19 @@ export default async function AnnouncementsPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6 animate-slide-up pb-12">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold">Announcements</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold">Announcements</h1>
         </div>
         {canManage && (
-          <Link href="/announcements/new">
-            <Button>New announcement</Button>
+          <Link href="/announcements/new" className="self-start sm:self-auto">
+            <Button size="sm" className="h-9 px-3 text-xs font-semibold">New announcement</Button>
           </Link>
         )}
       </div>
 
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3 sm:gap-4">
         {announcements.length === 0 && (
           <div className="p-8 text-center border border-dashed border-white/10 rounded-xl">
             <p className="text-sm text-white/40">No announcements yet.</p>
@@ -37,20 +36,20 @@ export default async function AnnouncementsPage() {
         {announcements.map((a, i) => (
           <div 
             key={a.id} 
-            className={`flex flex-col sm:flex-row gap-4 p-4 rounded-xl border transition-colors ${
+            className={`flex flex-col sm:flex-row gap-3.5 sm:gap-4 p-3.5 sm:p-4 rounded-xl border transition-colors ${
               a.pinned ? "bg-accent/5 border-accent/20" : "bg-surface/50 border-white/5 hover:bg-surface/80 hover:border-white/10"
             }`}
             style={{ animationDelay: `${i * 50}ms`, animationFillMode: "both" }}
           >
             <div className="flex-1 min-w-0 flex flex-col gap-2">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="font-semibold text-lg leading-snug flex items-center gap-2">
-                    {a.pinned && <svg className="w-4 h-4 text-accent" viewBox="0 0 24 24" fill="currentColor"><path d="M16 9V4l1-2H7L8 4v5c0 1.66-1.34 3-3 3h14c-1.66 0-3-1.34-3-3zM9 21.99l3-3 3 3v-9H9v9z"/></svg>}
-                    {a.title}
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <h2 className="font-semibold text-base sm:text-lg leading-snug flex items-center gap-2 text-white/95">
+                    {a.pinned && <svg className="w-4 h-4 text-accent shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M16 9V4l1-2H7L8 4v5c0 1.66-1.34 3-3 3h14c-1.66 0-3-1.34-3-3zM9 21.99l3-3 3 3v-9H9v9z"/></svg>}
+                    <span className="truncate">{a.title}</span>
                   </h2>
-                  <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wider text-white/40 mt-1">
-                    <span>{a.author?.name ?? "Deleted user"}</span>
+                  <div className="flex items-center gap-2 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-white/40 mt-1">
+                    <span className="truncate max-w-[120px] sm:max-w-none">{a.author?.name ?? "Deleted user"}</span>
                     <span>•</span>
                     <span>{a.createdAt.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}</span>
                   </div>
@@ -58,17 +57,17 @@ export default async function AnnouncementsPage() {
                 {canManage && <AnnouncementControls id={a.id} pinned={a.pinned} />}
               </div>
               
-              <p className="text-sm text-white/80 whitespace-pre-wrap max-w-4xl">
+              <p className="text-xs sm:text-sm text-white/80 whitespace-pre-wrap leading-relaxed max-w-4xl">
                 {a.body}
               </p>
             </div>
 
             {a.imageUrl && (
-              <div className="sm:w-64 shrink-0 rounded-lg overflow-hidden border border-white/10">
+              <div className="w-full sm:w-64 max-h-56 sm:max-h-none shrink-0 rounded-lg overflow-hidden border border-white/10">
                 <img
                   src={a.imageUrl}
                   alt=""
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover max-h-56 sm:max-h-none"
                 />
               </div>
             )}
