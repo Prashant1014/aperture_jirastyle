@@ -96,6 +96,20 @@ export async function sendPushNotification(
 }
 
 /**
+ * Sends a push notification to multiple user IDs.
+ */
+export async function sendPushNotificationToUsers(
+  userIds: string[],
+  payload: PushNotificationPayload
+) {
+  const uniqueIds = Array.from(new Set(userIds)).filter(Boolean);
+  if (uniqueIds.length === 0) return [];
+  return Promise.allSettled(
+    uniqueIds.map((id) => sendPushNotification(id, payload))
+  );
+}
+
+/**
  * Broadcasts a push notification to all registered subscriptions across all users.
  */
 export async function broadcastPushNotification(payload: PushNotificationPayload) {
