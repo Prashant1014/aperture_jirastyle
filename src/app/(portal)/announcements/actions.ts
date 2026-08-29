@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { isCoreOrAbove } from "@/lib/roles";
+import { broadcastPushNotification } from "@/lib/webpush";
 
 import { createClient } from "@supabase/supabase-js";
 
@@ -59,6 +60,13 @@ export async function createAnnouncementAction(
   await prisma.announcement.create({
     data: { title, body, pinned, imageUrl, authorId: session.user.id },
   });
+
+  // Broadcast Web Push to all active devices
+  broadcastPushNotification({
+    title: `📢 ${title}`,
+    body: body.length > 120 ? `${body.substring(0, 117)}...` : body,
+    url: "/announcements",
+  }).catch((err) => console.error("Error broadcasting push for announcement:", err));
 
   revalidatePath("/announcements");
   redirect("/announcements");

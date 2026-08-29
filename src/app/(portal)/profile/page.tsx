@@ -33,6 +33,10 @@ export default async function ProfilePage() {
       </Card>
 
       <Card className="p-6">
+        <h2 className="text-lg font-semibold text-white mb-1">Push Notifications</h2>
+        <p className="text-xs text-white/50 mb-4">
+          Receive real-time alerts on your phone or desktop even when the portal is closed.
+        </p>
         <PushSettings />
       </Card>
     </div>

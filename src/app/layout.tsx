@@ -11,6 +11,16 @@ const outfit = Outfit({
 export const metadata: Metadata = {
   title: "Aperture Platform",
   description: "Internal portal for the working members of Aperture, the digital arts society.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Aperture",
+  },
+  icons: {
+    icon: "/icon.png",
+    apple: "/icon.png",
+  },
 };
 
 export default function RootLayout({

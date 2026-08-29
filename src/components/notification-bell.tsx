@@ -8,6 +8,7 @@ import {
   markAllAsReadAction,
 } from "@/app/(portal)/notifications/actions";
 import type { Notification } from "@/generated/prisma/client";
+import { EnableNotificationsButton } from "./enable-notifications-button";
 
 export function NotificationBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -91,11 +92,13 @@ export function NotificationBell() {
             )}
           </div>
           
+          <EnableNotificationsButton variant="dropdown-item" />
+
           <div className="overflow-y-auto flex-1">
             {notifications.length === 0 ? (
               <div className="px-4 py-8 text-center">
                 <p className="text-sm text-white/40 font-medium">No new notifications</p>
-                <p className="text-xs text-white/30 mt-1">You're all caught up.</p>
+                <p className="text-xs text-white/30 mt-1">You&apos;re all caught up.</p>
               </div>
             ) : (
               <div className="divide-y divide-white/5">

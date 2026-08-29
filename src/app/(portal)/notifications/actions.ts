@@ -44,12 +44,12 @@ export async function markAllAsReadAction() {
 
 export async function sendTestNotificationAction() {
   const session = await auth();
-  if (!session?.user || session.user.role !== "WEBADMIN") {
+  if (!session?.user) {
     throw new Error("Unauthorized");
   }
 
-  const title = "Test notification";
-  const message = "🔔 This is a test notification from Aperture. Your notification system is working correctly.";
+  const title = "New Update 🔔";
+  const message = "You have a new notification! Push notifications are working on this device.";
 
   await prisma.notification.create({
     data: {
@@ -61,9 +61,10 @@ export async function sendTestNotificationAction() {
   });
 
   // Also send a Web Push Notification
-  sendPushNotification(session.user.id, {
+  return await sendPushNotification(session.user.id, {
     title,
     body: message,
     url: "/",
-  }).catch(console.error);
+  });
 }
+

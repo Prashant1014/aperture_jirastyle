@@ -25,7 +25,13 @@ export async function updateProfileAction(
     return { error: "Name cannot be empty." };
   }
 
-  const updateData: any = { 
+  const updateData: {
+    name: string;
+    bio: string | null;
+    contactNumber: string | null;
+    avatarUrl?: string;
+    passwordHash?: string;
+  } = { 
     name,
     bio: bio || null,
     contactNumber: contactNumber || null,

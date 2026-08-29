@@ -2,9 +2,22 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { sendPushNotification } from "@/lib/webpush";
 import { revalidatePath } from "next/cache";
 
-export async function subscribeUserToPushAction(subscription: any) {
+export type PushSubscriptionInput = {
+  endpoint: string;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
+};
+
+export async function getVapidPublicKeyAction(): Promise<string | undefined> {
+  return process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || process.env.VAPID_PUBLIC_KEY || undefined;
+}
+
+export async function subscribeUserToPushAction(subscription: PushSubscriptionInput) {
   const session = await auth();
   if (!session?.user) {
     throw new Error("Unauthorized");
@@ -31,6 +44,7 @@ export async function subscribeUserToPushAction(subscription: any) {
   });
 
   revalidatePath("/profile");
+  return { success: true };
 }
 
 export async function unsubscribeUserFromPushAction(endpoint: string) {
@@ -47,4 +61,18 @@ export async function unsubscribeUserFromPushAction(endpoint: string) {
   });
 
   revalidatePath("/profile");
+  return { success: true };
+}
+
+export async function sendSelfTestPushAction() {
+  const session = await auth();
+  if (!session?.user) {
+    throw new Error("Unauthorized");
+  }
+
+  return await sendPushNotification(session.user.id, {
+    title: "New Update 🔔",
+    body: "You have a new notification! Aperture web push is live.",
+    url: "/",
+  });
 }
